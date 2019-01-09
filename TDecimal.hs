@@ -42,16 +42,17 @@ tdecs t1 t2 = tdec (tprecs t1 t2)
 tprecs :: TDec -> TDec -> Int
 tprecs t1 t2 = tprec t1 `max` tprec t2
 
-liftT2 :: (Rational -> Rational -> t) -> TDec -> TDec -> t
-liftT2 f t1 t2 = tfrac t1 `f` tfrac t2
+liftT2 :: (Rational -> Rational -> Rational) -> TDec -> TDec -> TDec
+liftT2 f t1 t2 = tdecs t1 t2 (tfrac t1 `f` tfrac t2)
 
-tdiv t1 t2 = tdecs t1 t2 (liftT2 (/) t1 t2)
+tdiv :: TDec -> TDec -> TDec
+tdiv = liftT2 (/)
 
 tmul :: TDec -> TDec -> TDec
-tmul t1 t2 = tdecs t1 t2 (liftT2 (*) t1 t2)
+tmul = liftT2 (*)
 
 tadd :: TDec -> TDec -> TDec
-tadd t1 t2 = tdecs t1 t2 (liftT2 (+) t1 t2)
+tadd = liftT2 (+)
 
 -- | return a TDec only containing the remainder
 trem :: TDec -> Rational
