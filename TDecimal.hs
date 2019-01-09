@@ -19,15 +19,15 @@ instance Show TDec where
     show (TDec (p, v, r)) = showR p v
 
 instance Num TDec where
-    (+) = tadd
-    (*) = tmul
+    (+) = liftT2 (+)
+    (*) = liftT2 (*)
     signum (TDec (p, v1, r1))      = tdec p (signum (v1+r1))
     abs (TDec (p, v1, r1))         = tdec p (abs (v1+r1))
     fromInteger int                = tdec tdefprec (fromInteger int)
     negate      (TDec (p, v1, r1)) = tdec p (negate (v1+r1))
 
 instance Fractional TDec where
-    (/)          = tdiv
+    (/)          = liftT2 (/)
     fromRational = td
 
 tdefprec :: Int
@@ -44,15 +44,6 @@ tprecs t1 t2 = tprec t1 `max` tprec t2
 
 liftT2 :: (Rational -> Rational -> Rational) -> TDec -> TDec -> TDec
 liftT2 f t1 t2 = tdecs t1 t2 (tfrac t1 `f` tfrac t2)
-
-tdiv :: TDec -> TDec -> TDec
-tdiv = liftT2 (/)
-
-tmul :: TDec -> TDec -> TDec
-tmul = liftT2 (*)
-
-tadd :: TDec -> TDec -> TDec
-tadd = liftT2 (+)
 
 -- | return a TDec only containing the remainder
 trem :: TDec -> Rational
